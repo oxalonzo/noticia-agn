@@ -24,6 +24,7 @@ class RegisteredUserController extends Controller
 
     /**
      * Handle an incoming registration request.
+
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -31,20 +32,22 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'max:255', 'unique:'.User::class],
+            'rol' => ['required', 'numeric', 'between:1,2'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'rol' => $request->rol,
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false))->with('success', 'Usuario creado exitosamente.');
     }
 }

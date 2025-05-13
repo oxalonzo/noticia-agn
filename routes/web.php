@@ -3,6 +3,7 @@
 use App\Http\Controllers\LectoresController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +27,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/noticia/{id}', [NoticiasController::class, 'update'])->name('noticia.update');
     Route::delete('/noticia/{id}', [NoticiasController::class, 'destroy'])->name('noticia.destroy');
 });
+
+
+    Route::get('/usuarios', [UsuarioController::class, 'index'])->middleware('auth')->name('usuarios.index');
+    Route::get('/usuarios/create', [UsuarioController::class, 'create'])->middleware('auth')->name('usuarios.create');
+    Route::post('/usuarios/store', [UsuarioController::class, 'store'])->middleware('auth')->name('usuarios.store');
+    Route::get('/usuarios/{id}/edit', [UsuarioController::class, 'edit'])->middleware('auth')->name('usuarios.edit');
+    Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->middleware('auth')->name('usuarios.update');
+    Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->middleware('auth')->name('usuarios.destroy');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

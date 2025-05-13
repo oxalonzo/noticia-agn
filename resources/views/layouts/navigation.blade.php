@@ -15,6 +15,27 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @auth
+                      @if (auth()->user()->rol === 1 && Route::has('register'))
+
+                    <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                        {{ __('Crear usuario') }}
+                    </x-nav-link>
+
+                    @endif
+                    @endauth
+
+                    @auth
+                    @if (auth()->user()->rol === 1 )
+
+                  <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios')">
+                      {{ __('Ver usuarios') }}
+                  </x-nav-link>
+
+                  @endif
+                  @endauth
+
                 </div>
             </div>
 
@@ -34,9 +55,14 @@
                     </x-slot>
 
                     <x-slot name="content">
+
+                    @auth
+                      @if (auth()->user()->rol === 1)
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+                        @endif
+                    @endauth
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">

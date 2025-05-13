@@ -43,25 +43,28 @@
                         <div class="mb-5">
                             <x-input-label for="titulo_noticia_portada" :value="__('Título Noticia Portada')" class="mb-2 block uppercase text-gray-500 font-bold" />
                             <x-text-input id="titulo_noticia_portada" class="p-3 w-full mb-4" type="text" name="titulo_noticia_portada" required />
+                            <x-input-error :messages="$errors->get('titulo_noticia_portada')" class="mt-2" />
                         </div>
             
                         {{-- Titulo Noticia --}}
                         <div class="mb-5">
                             <x-input-label for="titulo_noticia" :value="__('Título Noticia')" class="mb-2 block uppercase text-gray-500 font-bold" />
                             <x-text-input id="titulo_noticia" class="p-3 w-full mb-4" type="text" name="titulo_noticia" required />
+                            <x-input-error :messages="$errors->get('titulo_noticia')" class="mt-2" />
                         </div>
             
                         {{-- Descripción Noticia --}}
                         <div class="mb-5">
                             <x-input-label for="descripcion_noticia" :value="__('Descripción Noticia')" class="mb-2 block uppercase text-gray-500 font-bold" />
                             <textarea id="descripcion_noticia" name="descripcion_noticia" rows="4" class="p-3 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required></textarea>
+                            <x-input-error :messages="$errors->get('descripcion_noticia')" class="mt-2" />
                         </div>
                     </div>
             
                     {{-- Columna derecha: selección de imagen --}}
                     <div class="w-full md:w-1/2 px-4">
                         <x-input-label :value="__('Selecciona una Imagen para la Noticia')" class="mb-4 block uppercase text-gray-500 font-bold" />
-            
+                        <x-input-error :messages="$errors->get('imagen_noticia')" class="mt-2" />
                         <div class="grid grid-cols-2 gap-4">
                             @foreach (range(1, 6) as $i)
                                 <label class="cursor-pointer relative border-2 border-transparent hover:border-indigo-500 rounded overflow-hidden p-1">
@@ -70,6 +73,19 @@
                                     <span class="mt-2 text-sm text-gray-700 font-bold flex justify-center">{{ $nombresImagenes[$i] }}</span>
                                 </label>
                             @endforeach
+
+                            {{-- Subir imagen personalizada --}}
+                            <div class="mt-6">
+                               <x-input-label for="imagen_personalizada" :value="__('O sube tu propia imagen')" class="mb-2 block uppercase text-gray-500 font-bold" />
+                               <input type="file" name="imagen_personalizada" id="imagen_personalizada" class="block w-full text-sm text-gray-500
+                               file:mr-4 file:py-2 file:px-4
+                               file:rounded file:border-0
+                                file:text-sm file:font-semibold
+                               file:bg-indigo-50 file:text-indigo-700
+                               hover:file:bg-indigo-100
+                               " accept="image/*">
+                               <x-input-error :messages="$errors->get('imagen_personalizada')" class="mt-2" />
+                            </div>
                         </div>
                     </div>
                 </div>

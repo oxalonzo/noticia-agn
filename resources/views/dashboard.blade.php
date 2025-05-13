@@ -13,27 +13,42 @@
 
         <div class="md:w-3/4 p-10 bg-white rounded-lg shadow-xl mt-10 md:mt-0 h-full ">
 
-            <div class="flex justify-end items-center mb-4">
+            <div class="flex justify-between items-center mb-4">
+                <!-- Botón para Crear nueva noticia -->
                 <x-link :href="route('noticia.create')"
-                    class="  border border-indigo-500 p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-indigo-500 hover:bg-indigo-700">
+                    class="border border-indigo-500 p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-indigo-500 hover:bg-indigo-700">
                     Crear nueva Noticia
                 </x-link>
-            </div>
 
+                <!-- Barra de búsqueda -->
+                <form method="GET" action="{{ route('dashboard') }}" class="flex items-center">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por título"
+                        class="border border-gray-300 rounded-md p-2 mr-2 focus:outline-none">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1.5 px-4 rounded shadow transition duration-200">
+                        Buscar
+                    </button>
+                </form>
+            </div>
 
             @if (session('success'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" x-transition
-                    class=" rounded-lg bg-green-100 border border-green-400 text-green-700 px-4 py-3 shadow-md mb-3"
+                    class="rounded-lg bg-green-100 border border-green-400 text-green-700 px-4 py-3 shadow-md mb-3"
                     role="alert">
                     <p class="font-semibold">{{ session('success') }}</p>
                 </div>
             @endif
 
-
+            @if (session('error'))
+                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" x-transition
+                    class="rounded-lg bg-red-100 border border-red-400 text-red-700 px-4 py-3 shadow-md mb-3"
+                    role="alert">
+                    <p class="font-semibold">{{ session('error') }}</p>
+                </div>
+            @endif
 
             <div class="container mx-auto">
                 <h2 class="text-2xl font-semibold mb-4">Lista de Noticias</h2>
-            
+
                 <!-- Tabla de Noticias -->
                 <table class="min-w-full bg-white border border-gray-300 rounded-md">
                     <thead>
@@ -54,17 +69,22 @@
                                 <td class="px-4 py-2">{{ $noticia->titulo_noticia }}</td>
                                 <td class="px-4 py-2">{{ \Str::limit($noticia->descripcion_noticia, 50) }}</td>
                                 <td class="px-4 py-2">
-                                    <img src="{{ asset('imagenes_noticias/'.$noticia->imagen_noticia) }}" alt="Imagen {{ $noticia->id }}" class="w-20 h-20 object-cover">
+                                    @php
+                                    $esImagenSubida = !str_starts_with($noticia->imagen_noticia, 'imagen'); // ejemplo: imagen3.jpg
+                                    $rutaImagen = $esImagenSubida
+                                        ? asset('storage/imagenes_subidas_noticias/' . $noticia->imagen_noticia)
+                                        : asset('imagenes_noticias/' . $noticia->imagen_noticia);
+                                    @endphp
+                                    <img src="{{ $rutaImagen }}" alt="Imagen noticia" class="w-48 h-auto rounded shadow">
                                 </td>
                                 <td class="px-4 py-2">
                                     <div class="flex justify-center items-center space-x-3">
-                                        
                                         <!-- Botón Editar -->
                                         <a href="{{ route('noticia.edit', $noticia->id) }}"
                                            class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1.5 px-4 rounded shadow transition duration-200">
                                             Editar
                                         </a>
-                                
+
                                         <!-- Botón Eliminar -->
                                         <form action="{{ route('noticia.destroy', $noticia->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta noticia?');">
                                             @csrf
@@ -74,18 +94,19 @@
                                                 Eliminar
                                             </button>
                                         </form>
-                                
                                     </div>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-            
+
+                <!-- Paginación -->
+                <div class="mt-4">
+                    {{ $noticias->links() }} <!-- Esto genera los enlaces de paginación -->
+                </div>
+
             </div>
-
-
-
-
 
         </div>
 
