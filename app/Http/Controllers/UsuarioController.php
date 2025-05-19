@@ -19,7 +19,7 @@ class UsuarioController extends Controller
             return redirect()->route('dashboard')->with('error', 'No tienes permiso para acceder a esa página.');
         }
     
-        $usuarios = User::paginate(10);
+        $usuarios = User::paginate(3);
         return view('usuarios_admin.index', compact('usuarios'));
     }
     /**

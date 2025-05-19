@@ -16,7 +16,7 @@
             <div class="flex justify-end items-center mb-4">
                 <!-- Botón para ver os usuarios -->
                 <x-link :href="route('usuarios.index')"
-                    class="border border-indigo-500 p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-indigo-500 hover:bg-indigo-700">
+                    class="border border-[#dd6b10] p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-[#dd6b10] hover:bg-[#e98f3a]">
                     Ver todos los usuarios
                 </x-link>
             </div>
@@ -29,7 +29,7 @@
                 <div class="mb-4">
                     <label for="name" class="block font-semibold text-gray-700">Nombre</label>
                     <input type="text" name="name" id="name" value="{{ old('name', $usuario->name) }}"
-                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:border-indigo-500">
+                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:ring-transparent border-2 focus:border-[#dd6b10]">
                     @error('name')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -39,7 +39,7 @@
                 <div class="mb-4">
                     <label for="email" class="block font-semibold text-gray-700">Usuario</label>
                     <input type="text" name="email" id="email" value="{{ old('email', $usuario->email) }}"
-                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:border-indigo-500">
+                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:ring-transparent border-2 focus:border-[#dd6b10]">
                     @error('email')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -49,7 +49,7 @@
                 <div class="mb-4">
                     <label for="rol" class="block font-semibold text-gray-700">Rol</label>
                     <select name="rol" id="rol"
-                            class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:border-indigo-500">
+                            class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:ring-transparent border-2 focus:border-[#dd6b10]">
                         <option value="1" {{ $usuario->rol == 1 ? 'selected' : '' }}>Admin</option>
                         <option value="2" {{ $usuario->rol == 2 ? 'selected' : '' }}>Publicador</option>
                     </select>
@@ -62,7 +62,7 @@
                 <div class="mb-4">
                     <label for="password" class="block font-semibold text-gray-700">Contraseña (dejar en blanco si no quieres cambiarla)</label>
                     <input type="password" name="password" id="password"
-                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:border-indigo-500">
+                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:ring-transparent border-2 focus:border-[#dd6b10]">
                     @error('password')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -72,13 +72,13 @@
                 <div class="mb-4">
                     <label for="password_confirmation" class="block font-semibold text-gray-700">Confirmar Contraseña</label>
                     <input type="password" name="password_confirmation" id="password_confirmation"
-                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:border-indigo-500">
+                           class="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring focus:ring-transparent border-2 focus:border-[#dd6b10]">
                 </div>
         
                 {{-- Botón --}}
                 <div class="mt-6">
                     <button type="submit"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded">
+                            class="bg-green-500 hover:bg-green-400 text-white font-semibold px-4 py-2 rounded">
                         Actualizar Usuario
                     </button>
                 </div>

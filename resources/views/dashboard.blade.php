@@ -16,15 +16,15 @@
             <div class="flex justify-between items-center mb-4">
                 <!-- Botón para Crear nueva noticia -->
                 <x-link :href="route('noticia.create')"
-                    class="border border-indigo-500 p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-indigo-500 hover:bg-indigo-700">
-                    Crear nueva Noticia
+                    class="border border-[#dd6b10] p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-[#dd6b10] hover:bg-[#e98f3a]">
+                    Crear nueva Publicación
                 </x-link>
 
                 <!-- Barra de búsqueda -->
                 <form method="GET" action="{{ route('dashboard') }}" class="flex items-center">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por título"
-                        class="border border-gray-300 rounded-md p-2 mr-2 focus:outline-none">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-1.5 px-4 rounded shadow transition duration-200">
+                        class=" border-gray-300 rounded-md p-2 mr-2 focus:outline-none focus:ring focus:ring-transparent border focus:border-[#dd6b10]">
+                    <button type="submit" class="bg-[#dd6b10] hover:bg-[#e98f3a] text-white text-sm font-semibold py-2.5 px-4 rounded shadow transition duration-200">
                         Buscar
                     </button>
                 </form>
@@ -47,7 +47,7 @@
             @endif
 
             <div class="container mx-auto">
-                <h2 class="text-2xl font-semibold mb-4">Lista de Noticias</h2>
+                <h2 class="text-2xl font-semibold mb-4">Lista de Publicaciones</h2>
 
                 <!-- Tabla de Noticias -->
                 <table class="min-w-full bg-white border border-gray-300 rounded-md">

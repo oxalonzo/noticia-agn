@@ -22,7 +22,7 @@
             <select 
             name="rol"
              id="rol"
-             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-[#dd6b10] dark:focus:border-[#dd6b10] focus:ring-[#dd6b10] dark:focus:ring-[#dd6b10] rounded-md shadow-sm"
              >
                     <option value="">-- Seleciona un rol --</option>
                     <option value="1">Admin</option>
@@ -55,7 +55,7 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <x-primary-button class=" w-full justify-center bg-indigo-500">
+            <x-primary-button class=" w-full justify-center bg-[#dd6b10]">
                 {{ __('Crear usuario') }}
             </x-primary-button>
         </div>

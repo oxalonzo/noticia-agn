@@ -20,7 +20,7 @@ class NoticiasController extends Controller
     $noticias = Noticias::when($search, function ($query, $search) {
         return $query->where('titulo_noticia_portada', 'like', "%{$search}%")
                      ->orWhere('titulo_noticia', 'like', "%{$search}%");
-    })->paginate(10); // Paginación de 10 noticias por página
+    })->paginate(3); // Paginación de 10 noticias por página
 
     return view('dashboard', compact('noticias'));
 }
@@ -74,7 +74,7 @@ class NoticiasController extends Controller
             'user_id'                => Auth::id()
         ]);
     
-        return redirect()->route('dashboard')->with('success', 'Noticia creada exitosamente.');
+        return redirect()->route('dashboard')->with('success', 'Publicación creada exitosamente.');
     
 
     }
@@ -147,7 +147,7 @@ class NoticiasController extends Controller
              'imagen_noticia'         => $imagenFinal,
          ]);
      
-         return redirect()->route('dashboard')->with('success', 'Noticia actualizada exitosamente.');
+         return redirect()->route('dashboard')->with('success', 'Publicación actualizada exitosamente.');
      }
      
 
@@ -164,7 +164,7 @@ class NoticiasController extends Controller
          // Elimina el noticia de la base de datos
          $noticia->delete();
  
-         return redirect()->route('dashboard')->with('success', 'Noticia eliminado correctamente');
+         return redirect()->route('dashboard')->with('success', 'Publicación eliminado correctamente');
      }
 
 }

@@ -23,15 +23,13 @@
                         {{ __('Crear usuario') }}
                     </x-nav-link>
 
-                    @endif
-                    @endauth
+                    <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.index')">
+                       {{ __('Ver usuarios') }}
+                    </x-nav-link>
 
-                    @auth
-                    @if (auth()->user()->rol === 1 )
-
-                  <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios')">
-                      {{ __('Ver usuarios') }}
-                  </x-nav-link>
+                    <x-nav-link :href="route('destacada.index')" :active="request()->routeIs('destacada.index')">
+                       {{ __('Crear noticia destacada') }}
+                    </x-nav-link>
 
                   @endif
                   @endauth

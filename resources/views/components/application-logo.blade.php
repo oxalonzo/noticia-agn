@@ -1,1 +1,1 @@
-<h1>AGN Noticias</h1>
+<h1>Mural Digital AGN</h1>

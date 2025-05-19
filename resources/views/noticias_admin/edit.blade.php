@@ -1,5 +1,5 @@
 @section('titulo')
-    Editar Noticia
+    Editar Publicación
 @endsection
 
 @php
@@ -25,7 +25,7 @@
 
             <div class="flex justify-end items-center mb-4">
                 <x-link :href="route('dashboard')"
-                    class=" border border-indigo-500 p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-indigo-500 hover:bg-indigo-700">
+                    class=" border border-[#dd6b10] p-3 text-xs text-white dark:text-white hover:text-white font-bold dark:hover:text-white rounded-md focus:outline-none bg-[#dd6b10] hover:bg-[#e98f3a]">
                     Ver todas las noticias
                 </x-link>
             </div>
@@ -54,7 +54,7 @@
                         {{-- Descripción Noticia --}}
                         <div class="mb-5">
                             <x-input-label for="descripcion_noticia" :value="__('Descripción Noticia')" class="mb-2 block uppercase text-gray-500 font-bold" />
-                            <textarea id="descripcion_noticia" name="descripcion_noticia" rows="4" class="p-3 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>{{ old('descripcion_noticia', $noticia->descripcion_noticia) }}</textarea>
+                            <textarea id="descripcion_noticia" name="descripcion_noticia" rows="4" class="p-3 w-full border-gray-300 focus:border-[#dd6b10] focus:ring-[#dd6b10] rounded-md shadow-sm" required>{{ old('descripcion_noticia', $noticia->descripcion_noticia) }}</textarea>
                             <x-input-error :messages="$errors->get('descripcion_noticia')" class="mt-2" />
                         </div>
                     </div>
@@ -90,7 +90,7 @@
             
                 {{-- Botón para enviar --}}
                 <div class="mt-6">
-                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">Actualizar Noticia</button>
+                    <button type="submit" class="bg-[#dd6b10] hover:bg-[#e98f3a] text-white px-6 py-2 rounded ">Actualizar Publicación</button>
                 </div>
             </form>
 
