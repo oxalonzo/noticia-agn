@@ -22,7 +22,7 @@
             <select 
             name="rol"
              id="rol"
-             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-[#dd6b10] dark:focus:border-[#dd6b10] focus:ring-[#dd6b10] dark:focus:ring-[#dd6b10] rounded-md shadow-sm"
+             class="w-full border-gray-300 dark:border-gray-300 dark:bg-white dark:text-black focus:border-[#dd6b10] dark:focus:border-[#dd6b10] focus:ring-[#dd6b10] dark:focus:ring-[#dd6b10] rounded-md shadow-sm"
              >
                     <option value="">-- Seleciona un rol --</option>
                     <option value="1">Admin</option>

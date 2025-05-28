@@ -11,16 +11,25 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+               <!-- Estilos y scripts según entorno -->
+@env('local')
+    {{-- Entorno local: usa Vite en modo dev --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js']) 
+@else
+    {{-- Entorno producción: carga archivos compilados manualmente --}}
+     <link rel="stylesheet" href="{{ asset('build/assets/app-B2ic9xQ4.css') }}">
+        <script type="module" src="{{ asset('build/assets/app-Bf4POITK.js') }}"></script>
+@endenv
+
+
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-100">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
+                <header class="bg-white dark:bg-white shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>

@@ -8,4 +8,7 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: true  // ¡Esto es clave para permitir acceso desde otras máquinas!
+    }
 });

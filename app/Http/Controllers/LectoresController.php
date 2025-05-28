@@ -30,12 +30,15 @@ class LectoresController extends Controller
      */
     public function show($id)
     {
-        // mostrar una noticia en especifico
-          // Buscar la noticia por ID
+       // Buscar la noticia por ID
     $noticia = Noticias::findOrFail($id);
 
-    // Retornar la vista con la noticia
-    return view('noticias-show', compact('noticia'));
+    // Retornar los datos de la noticia en formato JSON
+    return response()->json([
+        'titulo' => $noticia->titulo_noticia,
+        'descripcion' => $noticia->descripcion_noticia,
+        'imagen' => $noticia->imagen_noticia,
+    ]);
 
     }
 
@@ -44,9 +47,17 @@ class LectoresController extends Controller
     public function MostrarDestacada($id)
     {
 
-        $destacada = Destacada::FindOrFail($id);
+           // Buscar la noticia por ID
+    $destacada = Destacada::findOrFail($id);
 
-        return view('noticias-destacada-show', compact('destacada'));
+    // Retornar los datos de la destacada en formato JSON
+    return response()->json([
+        'titulo' => $destacada->titulo_noticia_destacada,
+        'descripcion' => $destacada->descripcion_noticia_destacada,
+        'imagen' => $destacada->imagen_noticia_destacada,
+    ]);
+
+       
 
     }
 

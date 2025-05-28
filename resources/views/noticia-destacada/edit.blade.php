@@ -65,7 +65,7 @@
                         <x-input-error :messages="$errors->get('imagen_noticia_destacada')" class="mt-2" />
                         <div class="grid grid-cols-2 gap-4">
                             @foreach (range(1, 6) as $i)
-                                <label class="cursor-pointer relative border-2 border-transparent hover:border-indigo-500 rounded overflow-hidden p-1">
+                                <label class="cursor-pointer relative border-2 border-transparent hover:border-[#dd6b10]  rounded overflow-hidden p-1">
                                     <input type="radio" name="imagen_noticia_destacada" value="imagen{{ $i }}.jpg" class="hidden peer" @if($destacada->imagen_noticia_destacada === 'imagen'.$i.'.jpg') checked @endif>
                                     <img src="{{ asset('imagenes_noticias/imagen'.$i.'.jpg') }}" alt="Imagen {{ $i }}" class="w-full h-32 object-cover rounded peer-checked:border-4 peer-checked:border-indigo-500">
                                     <span class="mt-2 text-sm text-gray-700 font-bold flex justify-center">{{ $nombresImagenes[$i] }}</span>

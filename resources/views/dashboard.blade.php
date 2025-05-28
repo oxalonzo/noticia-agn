@@ -4,8 +4,8 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Noticias') }}
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-800 leading-tight">
+            {{ __('Publicaciones') }}
         </h2>
     </x-slot>
 
@@ -102,7 +102,7 @@
                 </table>
 
                 <!-- Paginación -->
-                <div class="mt-4">
+                <div class="mt-4 bg-white dark:bg-transparent">
                     {{ $noticias->links() }} <!-- Esto genera los enlaces de paginación -->
                 </div>
 
