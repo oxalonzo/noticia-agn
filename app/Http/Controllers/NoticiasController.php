@@ -47,7 +47,7 @@ class NoticiasController extends Controller
             'titulo_noticia'         => 'required|string|max:255',
             'descripcion_noticia'    => 'required|string|max:2000',
             'imagen_noticia'         => 'nullable|in:imagen1.jpg,imagen2.jpg,imagen3.jpg,imagen4.jpg,imagen5.jpg,imagen6.jpg',
-            'imagen_personalizada'   => 'nullable|image|max:2048', // 2MB máximo
+            'imagen_personalizada'   => 'nullable|image|max:4048', // 2MB máximo
         ]);
 
          // Determinar qué imagen usar
@@ -103,7 +103,7 @@ class NoticiasController extends Controller
              'titulo_noticia'         => 'required|string|max:255',
              'descripcion_noticia'    => 'required|string|max:2000',
              'imagen_noticia'         => 'nullable|in:imagen1.jpg,imagen2.jpg,imagen3.jpg,imagen4.jpg,imagen5.jpg,imagen6.jpg',
-             'imagen_personalizada'   => 'nullable|image|max:2048', // 2MB máximo
+             'imagen_personalizada'   => 'nullable|image|max:4048', // 2MB máximo
          ]);
      
          // Obtener la noticia que estamos editando

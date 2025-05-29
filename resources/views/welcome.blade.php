@@ -41,7 +41,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js']) 
 @else
     {{-- Entorno producción: carga archivos compilados manualmente --}}
-     <link rel="stylesheet" href="{{ asset('build/assets/app-B2ic9xQ4.css') }}">
+     <link rel="stylesheet" href="{{ asset('build/assets/app-Dd7iGcIo.css') }}">
         <script type="module" src="{{ asset('build/assets/app-Bf4POITK.js') }}"></script>
 @endenv
 
@@ -51,10 +51,10 @@
   <body class="index-page">
 
  
-  <!-- Modal -->
-<div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 min-h-screen overflow-y-auto transition-opacity duration-300 hidden">
+ <!-- Modal Normal -->
+<div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 min-h-screen overflow-y-auto transition-opacity duration-300 hidden">
     <div id="modalBox"
-        class="relative bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 p-6 transform scale-95 opacity-0 transition-all duration-300 max-h-screen overflow-y-auto">
+        class="relative bg-white rounded-lg shadow-xl w-full max-w-[80%] mx-4 p-6 transform scale-95 opacity-0 transition-all duration-300 max-h-[90vh] overflow-y-auto">
         
         <!-- Botón de cerrar -->
         <button onclick="closeNoticiaModal()" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-2xl font-bold">
@@ -62,17 +62,18 @@
         </button>
 
         <!-- Contenido del modal -->
-        <div id="modalContent" class="mt-6 space-y-4">
-            <!-- Se inyecta con JavaScript -->
+        <div id="modalContent" class="mt-6 grid md:grid-cols-2 gap-6 items-start">
+            <!-- JS injecta aquí -->
+            <!-- Imagen a la izquierda -->
+            <!-- Texto a la derecha -->
         </div>
     </div>
 </div>
 
-
-<!-- Modal -->
-<div id="modalDestacada" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 min-h-screen overflow-y-auto transition-opacity duration-300 hidden">
+<!-- Modal Destacada -->
+<div id="modalDestacada" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 min-h-screen overflow-y-auto transition-opacity duration-300 hidden">
     <div id="modalBoxDestacada"
-        class="relative bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 p-6 transform scale-95 opacity-0 transition-all duration-300 max-h-screen overflow-y-auto">
+        class="relative bg-white rounded-lg shadow-xl w-full max-w-[80%] mx-4 p-6 transform scale-95 opacity-0 transition-all duration-300 max-h-[90vh] overflow-y-auto">
         
         <!-- Botón de cerrar -->
         <button onclick="closeDestacadaModal()" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-2xl font-bold">
@@ -80,8 +81,8 @@
         </button>
 
         <!-- Contenido del modal -->
-        <div id="modalContentdestacada" class="mt-6 space-y-4">
-            <!-- Se inyecta con JavaScript -->
+        <div id="modalContentdestacada" class="mt-6 grid md:grid-cols-2 gap-6 items-start">
+            <!-- JS injecta aquí -->
         </div>
     </div>
 </div>
@@ -121,93 +122,72 @@
        
 
 
-    <div class="container mx-auto px-4 py-8 space-y-10">
-    <!-- Fila superior: destacada (col-span-3) y una pequeña al lado (col-span-1) -->
+  <div class="container mx-auto px-4 py-8 space-y-10">
     @if($destacada)
-        <div class="grid grid-cols-4 gap-4">
+
+   
+        <div class="grid  grid-cols-2 gap-4">
             <!-- Noticia destacada -->
-            
-            <div class="col-span-3">
-            <a class="mt-4 text-[#dd6b10] " onclick="openDestacadaModal({{ $destacada->id }})">
-              <div class="relative group w-full h-96 rounded-lg overflow-hidden shadow-lg">
+            <div class="">
+                <a class="mt-4 text-[#dd6b10]" onclick="openDestacadaModal({{ $destacada->id }})">
+                    <div class="relative group w-full h-96 rounded-lg overflow-hidden shadow-lg">
+                        @php
+                            $rutaImagen = Str::startsWith($destacada->imagen_noticia_destacada, 'http') 
+                                ? $destacada->imagen_noticia_destacada
+                                : (file_exists(public_path('storage/imagenes_subidas_noticias_destacada/' . $destacada->imagen_noticia_destacada)) 
+                                    ? asset('storage/imagenes_subidas_noticias_destacada/' . $destacada->imagen_noticia_destacada) 
+                                    : asset('imagenes_noticias/' . $destacada->imagen_noticia_destacada));
+                        @endphp
 
-                   <!-- Imagen -->
-                           @php
-                             $rutaImagen = Str::startsWith($destacada->imagen_noticia_destacada, 'http') 
-                             ? $destacada->imagen_noticia_destacada
-                             : (file_exists(public_path('storage/imagenes_subidas_noticias_destacada/' . $destacada->imagen_noticia_destacada)) 
-                             ? asset('storage/imagenes_subidas_noticias_destacada/' . $destacada->imagen_noticia_destacada) 
-                             : asset('imagenes_noticias/' . $destacada->imagen_noticia_destacada));
-                          @endphp
-
-                 <!-- Imagen de fondo -->
-                 <img src="{{ $rutaImagen }}" alt="Imagen destacada" class="absolute inset-0 group-hover:scale-105 transition-scale duration-300 w-full h-full object-cover z-0">
-
-                  <!-- Capa oscura para mejor legibilidad -->
-                  <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent bg-opacity-40 z-10"></div>
-
-                    <!-- Contenido encima de la imagen -->
-                   <div class="absolute inset-0 z-20 flex flex-col justify-end p-6 text-white">
-                     <h2 class="text-2xl font-bold text-gray-800">{{ $destacada->titulo_noticia_portada_destacada }}</h2>
-                     <p class="mt-2 text-gray-600 font-semibold">{{ \Illuminate\Support\Str::limit($destacada->descripcion_noticia_destacada, 100) }}</p>
-                   </div>
-              </div>
-              </a>
-            </div>
-
-
-            <!-- Una noticia pequeña al lado de la destacada -->
-            @if($noticias->count() > 0)
-              
-                @php $primeraNoticia = $noticias->first(); @endphp
-              <a class="mt-4 text-[#dd6b10] cursor-pointer " onclick="openNoticiaModal({{ $primeraNoticia->id }})">
-                 <!-- Imagen -->
-                  @php
-                        $rutaImagen = Str::startsWith($primeraNoticia->imagen_noticia, 'http') 
-                        ? $primeraNoticia->imagen_noticia
-                        : (file_exists(public_path('storage/imagenes_subidas_noticias/' . $primeraNoticia->imagen_noticia)) 
-                        ? asset('storage/imagenes_subidas_noticias/' . $primeraNoticia->imagen_noticia) 
-                        : asset('imagenes_noticias/' . $primeraNoticia->imagen_noticia));
-                  @endphp
-                <div>
-                    <div class="bg-white group rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ $rutaImagen }}" alt="Imagen de noticia" class="w-full h-48 object-cover group-hover:scale-105 transition-scale duration-300">
-                        <div class="p-4">
-                            <h3 class="text-lg font-semibold text-gray-800">{{ $primeraNoticia->titulo_noticia_portada }}</h3>
-                            <p class="text-gray-600 mt-2 font-semibold text-base">{{ \Illuminate\Support\Str::limit($primeraNoticia->descripcion_noticia, 30) }}</p>
+                        <img src="{{ $rutaImagen }}" alt="Imagen destacada" class="absolute inset-0 group-hover:scale-105 transition-scale duration-300 w-full h-full object-cover z-0">
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/35 bg-opacity-40 z-10"></div>
+                        <div class="absolute inset-0 z-20 flex flex-col justify-end p-6 text-white">
+                            <h2 class="text-2xl font-bold text-white tracking-wider">{{ $destacada->titulo_noticia_portada_destacada }}</h2>
                         </div>
                     </div>
-                </div>
-              </a>
-            @endif
+                </a>
+            </div>
+
+             <div class="grid grid-cols-1 gap-4">
+            
+               <div class="flex flex-col items-center  rounded shadow-sm   justify-center w-full text-center">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-quote-icon lucide-message-square-quote text-[#dd6b10] font-bold text-3xl"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 12a2 2 0 0 0 2-2V8H8"/><path d="M14 12a2 2 0 0 0 2-2V8h-2"/></svg>
+                  <h2 class=" mb-5 text-[32px] font-bold ">Frase del <span class="titulo-agn">día</span></h2>
+                 <h3 class="text-3xl frase-dia font">"El futuro pertenece a quienes creen en la belleza de sus sueños."</h3>
+               </div>
+  
+             </div>
+
         </div>
+
+       
+
     @endif
 
-    <!-- Grid de noticias restantes -->
+    <!-- Noticias restantes -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach($noticias->skip(1) as $noticia)
-        <a class="mt-4 text-[#dd6b10] cursor-pointer " onclick="openNoticiaModal({{ $noticia->id }})">
-
-                 <!-- Imagen -->
-                  @php
-                        $rutaImagen = Str::startsWith($noticia->imagen_noticia, 'http') 
+        @foreach($noticias as $noticia)
+            <a class="mt-4 text-[#dd6b10] cursor-pointer" onclick="openNoticiaModal({{ $noticia->id }})">
+                @php
+                    $rutaImagen = Str::startsWith($noticia->imagen_noticia, 'http') 
                         ? $noticia->imagen_noticia
                         : (file_exists(public_path('storage/imagenes_subidas_noticias/' . $noticia->imagen_noticia)) 
-                        ? asset('storage/imagenes_subidas_noticias/' . $noticia->imagen_noticia) 
-                        : asset('imagenes_noticias/' . $noticia->imagen_noticia));
-                  @endphp
-
-            <div class="bg-white rounded-lg shadow-md overflow-hidden group">
-                <img src="{{ $rutaImagen }}" alt="Imagen de noticia" class="w-full h-48 object-cover group-hover:scale-105 transition-scale duration-300">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-800">{{ $noticia->titulo_noticia_portada }}</h3>
-                    <p class="text-gray-600 mt-2 font-semibold text-base">{{ \Illuminate\Support\Str::limit($noticia->descripcion_noticia, 20) }}</p>
+                            ? asset('storage/imagenes_subidas_noticias/' . $noticia->imagen_noticia) 
+                            : asset('imagenes_noticias/' . $noticia->imagen_noticia));
+                @endphp
+                <div class="bg-white rounded-lg shadow-md overflow-hidden  h-full flex flex-col group">
+                    <img src="{{ $rutaImagen }}" alt="Imagen de noticia" class="w-full h-48 object-cover group-hover:scale-105 transition-scale duration-300">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-[#dd6b10] tracking-wider">{{ $noticia->titulo_noticia_portada }}</h3>
+                        {{-- <p class="text-gray-600 mt-2 font-semibold text-base">{{ \Illuminate\Support\Str::limit($noticia->descripcion_noticia, 20) }}</p> --}}
+                    </div>
                 </div>
-            </div>
-          </a>
+            </a>
         @endforeach
     </div>
 </div>
+
+
 
 
         
@@ -285,9 +265,14 @@
         const modalBox = document.getElementById('modalBox');
 
         modalContent.innerHTML = `
-            <img src="${rutaImagen}" alt="Imagen de la noticia" class="w-full h-64 object-cover rounded-md mb-4">
-            <h2 class="text-3xl font-bold text-gray-800">${data.titulo}</h2>
-            <p class="text-gray-700 leading-relaxed mt-4">${data.descripcion}</p>
+            <div>
+                <img src="${rutaImagen}" alt="Imagen de la noticia" class="w-full h-auto object-contain rounded-lg">
+            </div>
+            
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">${data.titulo}</h2>
+                <p class="text-gray-700 leading-relaxed text-lg">${data.descripcion}</p>
+            </div>
         `;
 
         modal.classList.remove('hidden');
@@ -343,9 +328,13 @@
         const modalBox = document.getElementById('modalBoxDestacada');
 
         modalContent.innerHTML = `
-            <img src="${rutaImagen}" alt="Imagen destacada" class="w-full h-64 object-cover rounded-md mb-4">
-            <h2 class="text-3xl font-bold text-gray-800">${data.titulo}</h2>
-            <p class="text-gray-700 leading-relaxed mt-4">${data.descripcion}</p>
+         <div>
+            <img src="${rutaImagen}" alt="Imagen destacada" class="w-full h-auto object-contain rounded-lg">
+        </div>
+         <div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">${data.titulo}</h2>
+            <p class="text-gray-700 leading-relaxed text-lg">${data.descripcion}</p>
+        </div>
         `;
 
         modal.classList.remove('hidden');

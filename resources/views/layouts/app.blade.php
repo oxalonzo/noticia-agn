@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js']) 
 @else
     {{-- Entorno producción: carga archivos compilados manualmente --}}
-     <link rel="stylesheet" href="{{ asset('build/assets/app-B2ic9xQ4.css') }}">
+     <link rel="stylesheet" href="{{ asset('build/assets/app-Dd7iGcIo.css') }}">
         <script type="module" src="{{ asset('build/assets/app-Bf4POITK.js') }}"></script>
 @endenv
 
