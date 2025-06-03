@@ -41,7 +41,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js']) 
 @else
     {{-- Entorno producción: carga archivos compilados manualmente --}}
-     <link rel="stylesheet" href="{{ asset('build/assets/app-Dd7iGcIo.css') }}">
+     <link rel="stylesheet" href="{{ asset('build/assets/app-D5qsYbyp.css') }}">
         <script type="module" src="{{ asset('build/assets/app-Bf4POITK.js') }}"></script>
 @endenv
 
@@ -62,7 +62,7 @@
         </button>
 
         <!-- Contenido del modal -->
-        <div id="modalContent" class="mt-6 grid md:grid-cols-2 gap-6 items-start">
+        <div id="modalContent" class="mt-6 grid md:grid-cols-1 gap-6 items-start">
             <!-- JS injecta aquí -->
             <!-- Imagen a la izquierda -->
             <!-- Texto a la derecha -->
@@ -81,7 +81,7 @@
         </button>
 
         <!-- Contenido del modal -->
-        <div id="modalContentdestacada" class="mt-6 grid md:grid-cols-2 gap-6 items-start">
+        <div id="modalContentdestacada" class="mt-6 grid md:grid-cols-1 gap-6 items-start">
             <!-- JS injecta aquí -->
         </div>
     </div>
@@ -153,7 +153,12 @@
                <div class="flex flex-col items-center  rounded shadow-sm   justify-center w-full text-center">
                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-quote-icon lucide-message-square-quote text-[#dd6b10] font-bold text-3xl"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 12a2 2 0 0 0 2-2V8H8"/><path d="M14 12a2 2 0 0 0 2-2V8h-2"/></svg>
                   <h2 class=" mb-5 text-[32px] font-bold ">Frase del <span class="titulo-agn">día</span></h2>
-                 <h3 class="text-3xl frase-dia font">"El futuro pertenece a quienes creen en la belleza de sus sueños."</h3>
+                  @if(!empty($frase))
+                      <h3 class="text-[27px] frase-dia font"><span class="text-[#dd6b10]">" </span>{{ $frase->frase }}<span class="text-[#dd6b10]"> "</span></h3>
+                @else
+                      <h3 class="text-[27px] frase-dia font"><span class="text-[#dd6b10]">" </span> No hay frase del día aun <span class="text-[#dd6b10]"> "</span></h3>
+                @endif
+                 
                </div>
   
              </div>
@@ -175,11 +180,11 @@
                             ? asset('storage/imagenes_subidas_noticias/' . $noticia->imagen_noticia) 
                             : asset('imagenes_noticias/' . $noticia->imagen_noticia));
                 @endphp
-                <div class="bg-white rounded-lg shadow-md overflow-hidden  h-full flex flex-col group">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden  h-full flex flex-col  group">
                     <img src="{{ $rutaImagen }}" alt="Imagen de noticia" class="w-full h-48 object-cover group-hover:scale-105 transition-scale duration-300">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold text-[#dd6b10] tracking-wider">{{ $noticia->titulo_noticia_portada }}</h3>
-                        {{-- <p class="text-gray-600 mt-2 font-semibold text-base">{{ \Illuminate\Support\Str::limit($noticia->descripcion_noticia, 20) }}</p> --}}
+                        
                     </div>
                 </div>
             </a>
@@ -265,12 +270,19 @@
         const modalBox = document.getElementById('modalBox');
 
         modalContent.innerHTML = `
+            
+
             <div>
+                 <h2 class="text-2xl text-[#dd6b10] font-bold  mb-4">${data.titulo}</h2>
+            </div>
+               
+        
+             <div>
                 <img src="${rutaImagen}" alt="Imagen de la noticia" class="w-full h-auto object-contain rounded-lg">
             </div>
             
             <div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">${data.titulo}</h2>
+                
                 <p class="text-gray-700 leading-relaxed text-lg">${data.descripcion}</p>
             </div>
         `;
@@ -328,9 +340,16 @@
         const modalBox = document.getElementById('modalBoxDestacada');
 
         modalContent.innerHTML = `
+
+
+        <div>
+                  <h2 class="text-3xl font-bold text-[#dd6b10] mb-4">${data.titulo}</h2>
+        </div>
+
          <div>
             <img src="${rutaImagen}" alt="Imagen destacada" class="w-full h-auto object-contain rounded-lg">
         </div>
+        
          <div>
             <h2 class="text-3xl font-bold text-gray-800 mb-4">${data.titulo}</h2>
             <p class="text-gray-700 leading-relaxed text-lg">${data.descripcion}</p>

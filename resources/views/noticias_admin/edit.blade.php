@@ -64,7 +64,7 @@
                         <x-input-label :value="__('Selecciona una Imagen para la Noticia')" class="mb-4 block uppercase text-gray-500 font-bold" />
                         <x-input-error :messages="$errors->get('imagen_noticia')" class="mt-2" />
                         <div class="grid grid-cols-2 gap-4">
-                            @foreach (range(1, 6) as $i)
+                            @foreach (range(1, 4) as $i)
                                 <label class="cursor-pointer relative border-2 border-transparent hover:border-[#dd6b10]  rounded overflow-hidden p-1">
                                     <input type="radio" name="imagen_noticia" value="imagen{{ $i }}.jpg" class="hidden peer" @if($noticia->imagen_noticia === 'imagen'.$i.'.jpg') checked @endif>
                                     <img src="{{ asset('imagenes_noticias/imagen'.$i.'.jpg') }}" alt="Imagen {{ $i }}" class="w-full h-32 object-cover rounded peer-checked:border-4 peer-checked:border-indigo-500">
@@ -74,13 +74,13 @@
 
                             {{-- Subir imagen personalizada --}}
                             <div class="mt-6">
-                               <x-input-label for="imagen_personalizada" :value="__('O sube tu propia imagen')" class="mb-2 block uppercase text-gray-500 font-bold" />
+                               <x-input-label for="imagen_personalizada" :value="__('Peronalizado')" class="mb-2 block uppercase text-gray-500 font-bold" />
                                <input type="file" name="imagen_personalizada" id="imagen_personalizada" class="block w-full text-sm text-gray-500
                                file:mr-4 file:py-2 file:px-4
                                file:rounded file:border-0
                                 file:text-sm file:font-semibold
-                               file:bg-indigo-50 file:text-indigo-700
-                               hover:file:bg-indigo-100
+                                file:bg-gray-300 file:text-[#dd6b10]
+                               hover:file:bg-[#dd6b10] hover:file:text-white
                                " accept="image/*">
                                <x-input-error :messages="$errors->get('imagen_personalizada')" class="mt-2" />
                             </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Destacada;
+use App\Models\Frases;
 use App\Models\Lectores;
 use App\Models\Noticias;
 use Illuminate\Http\Request;
@@ -19,8 +20,11 @@ class LectoresController extends Controller
 
         // Obtener la última noticia publicada
         $destacada = Destacada::latest()->first();
+
+        // Obtener la última noticia publicada
+        $frase = Frases::latest()->first();
         
-        return view('welcome', compact('noticias', 'destacada'));
+        return view('welcome', compact('noticias', 'destacada', 'frase'));
     }
 
    

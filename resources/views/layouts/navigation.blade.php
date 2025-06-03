@@ -27,12 +27,16 @@
                        {{ __('Ver usuarios') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('frases.index')" :active="request()->routeIs('frases.index')">
+                       {{ __('Crear frase') }}
+                    </x-nav-link>
+
 
                   @endif
                   @endauth
 
                   <x-nav-link :href="route('destacada.index')" :active="request()->routeIs('destacada.index')">
-                       {{ __('Crear noticia destacada') }}
+                       {{ __('Crear Publicación destacada') }}
                   </x-nav-link>
 
                 </div>
@@ -108,6 +112,10 @@
                         {{ __('Ver usuarios') }}
                     </x-responsive-nav-link>
 
+                    <x-responsive-nav-link :href="route('frases.index')" :active="request()->routeIs('frases.index')">
+                        {{ __('Crear frase') }}
+                    </x-responsive-nav-link>
+
                     
 
                 @endif
@@ -115,7 +123,7 @@
 
 
              <x-responsive-nav-link :href="route('destacada.index')" :active="request()->routeIs('destacada.index')">
-                       {{ __('Crear noticia destacada') }}
+                       {{ __('Crear Publicación destacada') }}
             </x-responsive-nav-link>
 
         </div>

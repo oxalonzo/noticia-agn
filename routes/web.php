@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DestacadaController;
+use App\Http\Controllers\FrasesController;
 use App\Http\Controllers\LectoresController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ProfileController;
@@ -42,6 +43,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/destacada/{id}/edit', [DestacadaController::class, 'edit'])->middleware('auth')->name('destacada.edit');
     Route::put('/destacada/{id}', [DestacadaController::class, 'update'])->middleware('auth')->name('destacada.update');
     Route::delete('/destacada/{id}', [DestacadaController::class, 'destroy'])->middleware('auth')->name('destacada.destroy');
+
+
+
+     //frase del dia 
+    Route::get('/frases', [FrasesController::class, 'index'])->middleware('auth')->name('frases.index');
+    Route::get('/frases/create', [FrasesController::class, 'create'])->middleware('auth')->name('frases.create');
+    Route::post('/frases/store', [FrasesController::class, 'store'])->middleware('auth')->name('frases.store');
+    Route::get('/frases/{id}/edit', [FrasesController::class, 'edit'])->middleware('auth')->name('frases.edit');
+    Route::put('/frases/{id}', [FrasesController::class, 'update'])->middleware('auth')->name('frases.update');
+    Route::delete('/frases/{id}', [FrasesController::class, 'destroy'])->middleware('auth')->name('frases.destroy');
 
 
     //mostrar las noticias y ver una en especifico
