@@ -57,11 +57,24 @@
                             <textarea id="descripcion_noticia" name="descripcion_noticia" rows="4" class="p-3 w-full border-gray-300 focus:border-[#dd6b10] focus:ring-[#dd6b10] rounded-md shadow-sm" required></textarea>
                             <x-input-error :messages="$errors->get('descripcion_noticia')" class="mt-2" />
                         </div>
+                        {{-- Subir varias imágenes de la publicación --}}
+<div class="mb-5">
+    <x-input-label for="imagenes" :value="__('Subir Imágenes de Publicación')" class="mb-2 block uppercase text-gray-500 font-bold" />
+    <input 
+        type="file" 
+        name="imagenes[]" 
+        id="imagenes" 
+        multiple 
+        accept="image/*"
+        class="p-3 w-full border-gray-300 focus:border-[#dd6b10] focus:ring-[#dd6b10] rounded-md shadow-sm"
+    >
+    <x-input-error :messages="$errors->get('imagenes')" class="mt-2" />
+</div>
                     </div>
             
                     {{-- Columna derecha: selección de imagen --}}
                     <div class="w-full md:w-1/2 px-4">
-                        <x-input-label :value="__('Selecciona imagen de Publicación')" class="mb-4 block uppercase text-gray-500 font-bold" />
+                        <x-input-label :value="__('Selecciona imagen de Portada')" class="mb-4 block uppercase text-gray-500 font-bold" />
                         <x-input-error :messages="$errors->get('imagen_noticia')" class="mt-2" />
                         <div class="grid grid-cols-2 gap-4">
                             @foreach (range(1, 4) as $i)

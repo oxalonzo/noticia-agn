@@ -21,7 +21,7 @@ class LectoresController extends Controller
         // Obtener la última noticia publicada
         $destacada = Destacada::latest()->first();
 
-        // Obtener la última noticia publicada
+        // Obtener la última frase publicada
         $frase = Frases::latest()->first();
         
         return view('welcome', compact('noticias', 'destacada', 'frase'));
@@ -41,7 +41,7 @@ class LectoresController extends Controller
     return response()->json([
         'titulo' => $noticia->titulo_noticia,
         'descripcion' => $noticia->descripcion_noticia,
-        'imagen' => $noticia->imagen_noticia,
+        'imagenes' => $noticia->imagenes, // es el campo JSON con las imágenes
     ]);
 
     }
@@ -59,6 +59,7 @@ class LectoresController extends Controller
         'titulo' => $destacada->titulo_noticia_destacada,
         'descripcion' => $destacada->descripcion_noticia_destacada,
         'imagen' => $destacada->imagen_noticia_destacada,
+        'imagenes'  => $destacada->imagenes,
     ]);
 
        

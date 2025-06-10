@@ -4,12 +4,10 @@
 
 @php
     $nombresImagenes = [
-        1 => 'junta',
-        2 => 'aviso importante',
-        3 => 'cumpleaños',
-        4 => 'flojo',
-        5 => 'premios',
-        6 => 'pago',
+        1 => 'Avisos',
+        2 => 'Charlas',
+        3 => 'Cursos',
+        4 => 'Vacantes',
     ];
 @endphp
 
@@ -57,6 +55,44 @@
                             <textarea id="descripcion_noticia_destacada" name="descripcion_noticia_destacada" rows="4" class="p-3 w-full border-gray-300 focus:border-[#dd6b10] focus:ring-[#dd6b10] rounded-md shadow-sm" required>{{ old('descripcion_noticia_destacada', $destacada->descripcion_noticia_destacada) }}</textarea>
                             <x-input-error :messages="$errors->get('descripcion_noticia_destacada')" class="mt-2" />
                         </div>
+
+                        {{-- Imágenes Actuales con opción de eliminar --}}
+            @if ($destacada->imagenes)
+                <div class="mb-5">
+                    <x-input-label :value="__('Imágenes Actuales')" class="mb-2 block uppercase text-gray-500 font-bold" />
+                    <div class="flex overflow-x-auto gap-2 max-w-full">
+                        <div class="flex flex-nowrap space-x-2">
+                            @foreach (json_decode($destacada->imagenes, true) ?? [] as $index => $img)
+                                <div class="relative flex flex-col items-center">
+                                    <img src="{{ asset('storage/imagenes_publicaciones_destacadas/' . $img) }}" alt="Imagen subida"
+                                        class="w-20 h-20 object-cover rounded shadow flex-shrink-0 mb-1">
+
+                                    {{-- Checkbox para eliminar --}}
+                                    <label class="text-xs text-red-600 cursor-pointer select-none">
+                                        <input type="checkbox" name="eliminar_imagenes[]" value="{{ $img }}" class="mr-1">
+                                        Eliminar
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Subir nuevas imágenes --}}
+            <div class="mb-5">
+                <x-input-label for="imagenes" :value="__('Subir Nuevas Imágenes')" class="mb-2 block uppercase text-gray-500 font-bold" />
+                <input 
+                    type="file" 
+                    name="imagenes[]" 
+                    id="imagenes" 
+                    multiple 
+                    accept="image/*"
+                    class="p-3 w-full border-gray-300 focus:border-[#dd6b10] focus:ring-[#dd6b10] rounded-md shadow-sm"
+                >
+                <x-input-error :messages="$errors->get('imagenes')" class="mt-2" />
+            </div>
+
                     </div>
             
                     {{-- Columna derecha: selección de imagen --}}

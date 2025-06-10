@@ -21,6 +21,7 @@ class Noticias extends Model
         'titulo_noticia_portada',
         'titulo_noticia',
         'descripcion_noticia',
+        'imagenes',
         'imagen_noticia',
         'user_id'
     ];

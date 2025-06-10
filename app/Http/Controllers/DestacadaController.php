@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Destacada;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class DestacadaController extends Controller
 {
@@ -39,20 +40,45 @@ class DestacadaController extends Controller
             'descripcion_noticia_destacada'    => 'required|string|max:2000',
             'imagen_noticia_destacada'         => 'nullable|in:imagen1.jpg,imagen2.jpg,imagen3.jpg,imagen4.jpg,imagen5.jpg,imagen6.jpg',
             'imagen_personalizada'   => 'nullable|image|max:2048', // 2MB máximo
+            'imagenes'                         => 'nullable|array',
+            'imagenes.*'                       => 'image|mimes:jpeg,png,jpg,gif|max:4048',
         ]);
 
+         // Manejo de múltiples imágenes
+    $imagenes = [];
+
+    if ($request->hasFile('imagenes')) {
+        foreach ($request->file('imagenes') as $imagen) {
+            $nombreArchivo = uniqid() . '.' . $imagen->getClientOriginalExtension();
+            $imagen->storeAs('imagenes_publicaciones_destacadas', $nombreArchivo, 'public');
+            $imagenes[] = $nombreArchivo;
+        }
+    }
+
          // Determinar qué imagen usar
-    $imagenFinal = $request->imagen_noticia_destacada;
+    // $imagenFinal = $request->imagen_noticia_destacada;
+
+    // if ($request->hasFile('imagen_personalizada')) {
+    //     $archivo = $request->file('imagen_personalizada');
+    //     $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
+    //     $archivo->storeAs('imagenes_subidas_noticias_destacada', $nombreArchivo, 'public');
+    //     $imagenFinal = $nombreArchivo; // Solo guarda el nombre del archivo
+    // } elseif ($request->filled('imagen_noticia')) {
+    //     $imagenFinal = $request->imagen_noticia_destacada; // imagen predefinida
+    // } else {
+    //     $imagenFinal = null;
+    // }
+
+     // Manejo de imagen de portada
+    $imagenFinal = null;
 
     if ($request->hasFile('imagen_personalizada')) {
         $archivo = $request->file('imagen_personalizada');
         $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
         $archivo->storeAs('imagenes_subidas_noticias_destacada', $nombreArchivo, 'public');
-        $imagenFinal = $nombreArchivo; // Solo guarda el nombre del archivo
-    } elseif ($request->filled('imagen_noticia')) {
-        $imagenFinal = $request->imagen_noticia_destacada; // imagen predefinida
-    } else {
-        $imagenFinal = null;
+        $imagenFinal = $nombreArchivo;
+    } elseif ($request->filled('imagen_noticia_destacada')) {
+        $imagenFinal = $request->imagen_noticia_destacada;
     }
     
         // Aquí puedes guardar los datos en la base de datos
@@ -62,6 +88,7 @@ class DestacadaController extends Controller
             'titulo_noticia_destacada'         => $request->titulo_noticia_destacada,
             'descripcion_noticia_destacada'    => $request->descripcion_noticia_destacada,
             'imagen_noticia_destacada'         => $imagenFinal,
+            'imagenes'                         => json_encode($imagenes),
             'user_id'                          => Auth::id()
         ]);
     
@@ -97,12 +124,42 @@ class DestacadaController extends Controller
              'titulo_noticia_destacada'         => 'required|string|max:255',
              'descripcion_noticia_destacada'    => 'required|string|max:2000',
              'imagen_noticia_destacada'         => 'nullable|in:imagen1.jpg,imagen2.jpg,imagen3.jpg,imagen4.jpg,imagen5.jpg,imagen6.jpg',
-             'imagen_personalizada'   => 'nullable|image|max:2048', // 2MB máximo
+             'imagen_personalizada'             => 'nullable|image|max:2048', // 2MB máximo
+             'imagenes'                         => 'nullable|array',
+             'imagenes.*'                       => 'image|mimes:jpeg,png,jpg,gif|max:4048',
+             'eliminar_imagenes'                => 'nullable|array',
+             'eliminar_imagenes.*'              => 'string',
          ]);
      
          // Obtener la noticia que estamos editando
          $destacada = Destacada::findOrFail($id);
      
+
+           // 1. Manejar eliminación de imágenes múltiples (campo `imagenes`)
+    $imagenesActuales = json_decode($destacada->imagenes, true) ?? [];
+    $imagenesEliminar = $request->input('eliminar_imagenes', []);
+
+    $imagenesFinales = array_filter($imagenesActuales, function ($img) use ($imagenesEliminar) {
+        return !in_array($img, $imagenesEliminar);
+    });
+
+    foreach ($imagenesEliminar as $imgEliminar) {
+        if (Storage::disk('public')->exists('imagenes_publicaciones_destacadas/' . $imgEliminar)) {
+            Storage::disk('public')->delete('imagenes_publicaciones_destacadas/' . $imgEliminar);
+        }
+    }
+
+    // 2. Subida de nuevas imágenes múltiples
+    if ($request->hasFile('imagenes')) {
+        foreach ($request->file('imagenes') as $imagen) {
+            $nombreArchivo = uniqid() . '.' . $imagen->getClientOriginalExtension();
+            $imagen->storeAs('imagenes_publicaciones_destacadas', $nombreArchivo, 'public');
+            $imagenesFinales[] = $nombreArchivo;
+        }
+    }
+
+
+
       // Determinar qué imagen usar
     $imagenFinal = $destacada->imagen_noticia_destacada;
 
@@ -138,6 +195,7 @@ class DestacadaController extends Controller
              'titulo_noticia_portada_destacada' => $request->titulo_noticia_portada_destacada,
              'titulo_noticia_destacada'         => $request->titulo_noticia_destacada,
              'descripcion_noticia_destacada'    => $request->descripcion_noticia_destacada,
+             'imagenes'                         => json_encode(array_values($imagenesFinales)), // Limpieza de índices
              'imagen_noticia_destacada'         => $imagenFinal,
          ]);
      

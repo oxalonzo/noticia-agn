@@ -57,7 +57,8 @@
                             <th class="px-4 py-2 text-left">Título Portada</th>
                             <th class="px-4 py-2 text-left">Título</th>
                             <th class="px-4 py-2 text-left">Descripción</th>
-                            <th class="px-4 py-2 text-left">Imagen</th>
+                            <th class="px-4 py-2 text-left">IMG Portada</th>
+                            <th class="px-4 py-2 text-left">Imágenes Subidas</th>
                             <th class="px-4 py-2 text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -77,6 +78,18 @@
                                     @endphp
                                     <img src="{{ $rutaImagen }}" alt="Imagen noticia" class="w-48 h-auto rounded shadow">
                                 </td>
+
+                               <td class="px-4 py-2">
+                                  <div class="flex overflow-x-auto gap-2 max-w-xs">
+                                    <div class="flex flex-nowrap space-x-2">
+                                        @foreach (json_decode($noticia->imagenes, true) ?? [] as $img)
+                                             <img src="{{ asset('storage/imagenes_publicaciones/' . $img) }}" alt="Imagen subida"
+                                               class="w-20 h-20 object-cover rounded shadow flex-shrink-0">
+                                        @endforeach
+                                    </div>
+                                 </div>
+                               </td>
+
                                 <td class="px-4 py-2">
                                     <div class="flex justify-center items-center space-x-3">
                                         <!-- Botón Editar -->

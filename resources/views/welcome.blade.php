@@ -41,7 +41,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js']) 
 @else
     {{-- Entorno producción: carga archivos compilados manualmente --}}
-     <link rel="stylesheet" href="{{ asset('build/assets/app-D5qsYbyp.css') }}">
+     <link rel="stylesheet" href="{{ asset('build/assets/app-DsVy656E.css') }}">
         <script type="module" src="{{ asset('build/assets/app-Bf4POITK.js') }}"></script>
 @endenv
 
@@ -50,6 +50,8 @@
 
   <body class="index-page">
 
+
+ 
  
  <!-- Modal Normal -->
 <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 min-h-screen overflow-y-auto transition-opacity duration-300 hidden">
@@ -84,6 +86,15 @@
         <div id="modalContentdestacada" class="mt-6 grid md:grid-cols-1 gap-6 items-start">
             <!-- JS injecta aquí -->
         </div>
+    </div>
+</div>
+
+
+   <!-- Modal para imagen ampliada -->
+<div id="imageZoomModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
+    <div class="relative">
+        <img id="zoomedImage" src="" alt="Imagen ampliada" class="max-w-[90vw] max-h-[90vh] rounded shadow-lg">
+        <button onclick="closeImageModal()" class="absolute top-2 right-2 text-white text-4xl font-bold">&times;</button>
     </div>
 </div>
 
@@ -235,64 +246,85 @@
 
 
   <script>
-    function openNoticiaModal(noticiaId) {
-        fetch(`/noticia/${noticiaId}/show`)
-            .then(response => response.json())
-            .then(data => {
-                let rutaImagen = '';
+   function openNoticiaModal(noticiaId) {
+    fetch(`/noticia/${noticiaId}/show`)
+        .then(response => response.json())
+        .then(data => {
+            renderNoticiaModalContent(data);
+        })
+        .catch(error => {
+            console.error('Error cargando la noticia:', error);
+        });
+}
 
-                if (data.imagen.startsWith('http')) {
-                    rutaImagen = data.imagen;
-                    renderNoticiaModalContent(data, rutaImagen);
-                } else {
-                    const storagePath = `/storage/imagenes_subidas_noticias/${data.imagen}`;
-                    const fallbackPath = `/imagenes_noticias/${data.imagen}`;
 
-                    fetch(storagePath, { method: 'HEAD' })
-                        .then(res => {
-                            rutaImagen = res.ok ? storagePath : fallbackPath;
-                            renderNoticiaModalContent(data, rutaImagen);
-                        })
-                        .catch(() => {
-                            rutaImagen = fallbackPath;
-                            renderNoticiaModalContent(data, rutaImagen);
-                        });
-                }
-            })
-            .catch(error => {
-                console.error('Error cargando la noticia:', error);
-            });
+  function renderNoticiaModalContent(data) {
+    const modalContent = document.getElementById('modalContent');
+    const modal = document.getElementById('modal');
+    const modalBox = document.getElementById('modalBox');
+
+    let imagenes = [];
+    try {
+        imagenes = JSON.parse(data.imagenes) || [];
+    } catch {
+        imagenes = [];
     }
 
-    function renderNoticiaModalContent(data, rutaImagen) {
-        const modalContent = document.getElementById('modalContent');
-        const modal = document.getElementById('modal');
-        const modalBox = document.getElementById('modalBox');
+    const imagenesHtml = imagenes.length > 0
+        ? `
+        <div class="flex overflow-x-auto gap-6 py-4 px-2" style="scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
+            ${imagenes.map(img => {
+                const imgSrcStorage = `/storage/imagenes_publicaciones/${img}`;
+                return `
+                    <img src="${imgSrcStorage}" alt="Imagen noticia"
+                        style="width: 600px; height: 850px; object-fit: contain; flex-shrink: 0;"
+                        class="rounded-lg shadow cursor-pointer"
+                        onclick="openImageModal('${imgSrcStorage}')"
+                    >
+                `;
+            }).join('')}
+        </div>
+        `
+        : `<p class="italic text-gray-500 mb-6">No hay imágenes para esta noticia.</p>`;
 
-        modalContent.innerHTML = `
-            
-
-            <div>
-                 <h2 class="text-2xl text-[#dd6b10] font-bold  mb-4">${data.titulo}</h2>
-            </div>
-               
+    modalContent.innerHTML = `
+        <div>
+            <h2 class="text-2xl text-[#dd6b10] font-bold mb-4">${data.titulo}</h2>
+        </div>
         
-             <div>
-                <img src="${rutaImagen}" alt="Imagen de la noticia" class="w-full h-auto object-contain rounded-lg">
-            </div>
-            
-            <div>
-                
-                <p class="text-gray-700 leading-relaxed text-lg">${data.descripcion}</p>
-            </div>
-        `;
+        <div>
+            ${imagenesHtml}
+        </div>
+        
+        <div>
+            <p class="text-gray-700 leading-relaxed text-lg">${data.descripcion}</p>
+        </div>
+    `;
 
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modalBox.classList.remove('scale-95', 'opacity-0');
-            modalBox.classList.add('scale-100', 'opacity-100');
-        }, 10);
-    }
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modalBox.classList.remove('scale-95', 'opacity-0');
+        modalBox.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function openImageModal(src) {
+    const zoomModal = document.getElementById('imageZoomModal');
+    const zoomedImage = document.getElementById('zoomedImage');
+    
+    zoomedImage.src = src;
+    zoomModal.classList.remove('hidden');
+}
+
+function closeImageModal() {
+    const zoomModal = document.getElementById('imageZoomModal');
+    const zoomedImage = document.getElementById('zoomedImage');
+    
+    zoomedImage.src = '';
+    zoomModal.classList.add('hidden');
+}
+
+
 
     function closeNoticiaModal() {
         const modal = document.getElementById('modal');
@@ -334,34 +366,71 @@
             });
     }
 
-    function renderDestacadaModalContent(data, rutaImagen) {
-        const modalContent = document.getElementById('modalContentdestacada');
-        const modal = document.getElementById('modalDestacada');
-        const modalBox = document.getElementById('modalBoxDestacada');
+    function renderDestacadaModalContent(data, rutaImagenPrincipal) {
+    const modalContent = document.getElementById('modalContentdestacada');
+    const modal = document.getElementById('modalDestacada');
+    const modalBox = document.getElementById('modalBoxDestacada');
 
-        modalContent.innerHTML = `
+    let imagenesExtra = [];
+    try {
+        imagenesExtra = JSON.parse(data.imagenes) || [];
+    } catch {
+        imagenesExtra = [];
+    }
 
+    const imagenesHtml = imagenesExtra.length > 0
+        ? `
+        <div class="flex overflow-x-auto gap-4 py-4 px-2">
+            ${imagenesExtra.map(img => {
+                const imgSrc = `/storage/imagenes_publicaciones_destacadas/${img}`;
+                return `
+                    <img src="${imgSrc}" alt="Imagen destacada extra"
+                        style="width: 600px; height: 850px; object-fit: contain; flex-shrink: 0;"
+                        class="rounded-lg shadow cursor-pointer"
+                        onclick="openImageModal('${imgSrc}')"
+                    >
+                `;
+            }).join('')}
+        </div>
+        `
+        : `<p class="italic text-gray-500 mb-6">No hay imágenes adicionales.</p>`;
+
+    modalContent.innerHTML = `
+        <div>
+            <h2 class="text-3xl font-bold text-[#dd6b10] mb-4">${data.titulo}</h2>
+        </div>
+
+        
+
+        ${imagenesHtml}
 
         <div>
-                  <h2 class="text-3xl font-bold text-[#dd6b10] mb-4">${data.titulo}</h2>
-        </div>
-
-         <div>
-            <img src="${rutaImagen}" alt="Imagen destacada" class="w-full h-auto object-contain rounded-lg">
-        </div>
-        
-         <div>
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">${data.titulo}</h2>
             <p class="text-gray-700 leading-relaxed text-lg">${data.descripcion}</p>
         </div>
-        `;
+    `;
 
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modalBox.classList.remove('scale-95', 'opacity-0');
-            modalBox.classList.add('scale-100', 'opacity-100');
-        }, 10);
-    }
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modalBox.classList.remove('scale-95', 'opacity-0');
+        modalBox.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+    function openImageModal(src) {
+    const zoomModal = document.getElementById('imageZoomModal');
+    const zoomedImage = document.getElementById('zoomedImage');
+    
+    zoomedImage.src = src;
+    zoomModal.classList.remove('hidden');
+}
+
+function closeImageModal() {
+    const zoomModal = document.getElementById('imageZoomModal');
+    const zoomedImage = document.getElementById('zoomedImage');
+    
+    zoomedImage.src = '';
+    zoomModal.classList.add('hidden');
+}
 
     function closeDestacadaModal() {
         const modal = document.getElementById('modalDestacada');

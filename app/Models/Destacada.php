@@ -21,6 +21,7 @@ class Destacada extends Model
         'titulo_noticia_portada_destacada',
         'titulo_noticia_destacada',
         'descripcion_noticia_destacada',
+        'imagenes',
         'imagen_noticia_destacada',
         'user_id'
     ];

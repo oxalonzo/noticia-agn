@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Noticias;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 class NoticiasController extends Controller
@@ -46,9 +47,29 @@ class NoticiasController extends Controller
             'titulo_noticia_portada' => 'required|string|max:255',
             'titulo_noticia'         => 'required|string|max:255',
             'descripcion_noticia'    => 'required|string|max:2000',
+            'imagenes' => ['required', 'array'],
+            'imagenes.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:4048'], // 2MB máximo por imagen
             'imagen_noticia'         => 'nullable|in:imagen1.jpg,imagen2.jpg,imagen3.jpg,imagen4.jpg,imagen5.jpg,imagen6.jpg',
             'imagen_personalizada'   => 'nullable|image|max:4048', // 2MB máximo
         ]);
+
+
+        //guarada varias imagenes subida para la publicacion
+       $imagenes = [];
+
+if ($request->hasFile('imagenes')) {
+    foreach ($request->file('imagenes') as $imagen) {
+        // Generar un nombre único para la imagen
+        $nombreArchivo = uniqid() . '.' . $imagen->getClientOriginalExtension();
+
+        // Guardar la imagen en la carpeta 'imagenes_publicaciones' pero sólo guardar el nombre
+        $imagen->storeAs('imagenes_publicaciones', $nombreArchivo, 'public');
+
+        // Solo guardamos el nombre, no la ruta
+        $imagenes[] = $nombreArchivo;
+    }
+}
+
 
          // Determinar qué imagen usar
     $imagenFinal = $request->imagen_noticia;
@@ -70,6 +91,7 @@ class NoticiasController extends Controller
             'titulo_noticia_portada' => $request->titulo_noticia_portada,
             'titulo_noticia'         => $request->titulo_noticia,
             'descripcion_noticia'    => $request->descripcion_noticia,
+            'imagenes'               => json_encode($imagenes),
             'imagen_noticia'         => $imagenFinal,
             'user_id'                => Auth::id()
         ]);
@@ -95,60 +117,88 @@ class NoticiasController extends Controller
 
 
      // Actualizar un banner en la base de datos
-     public function update(Request $request, $id)
-     {
-         // Validación
-         $request->validate([
-             'titulo_noticia_portada' => 'required|string|max:255',
-             'titulo_noticia'         => 'required|string|max:255',
-             'descripcion_noticia'    => 'required|string|max:2000',
-             'imagen_noticia'         => 'nullable|in:imagen1.jpg,imagen2.jpg,imagen3.jpg,imagen4.jpg,imagen5.jpg,imagen6.jpg',
-             'imagen_personalizada'   => 'nullable|image|max:4048', // 2MB máximo
-         ]);
-     
-         // Obtener la noticia que estamos editando
-         $noticia = Noticias::findOrFail($id);
-     
-      // Determinar qué imagen usar
+   public function update(Request $request, $id)
+{
+    // Validación
+    $request->validate([
+        'titulo_noticia_portada' => 'required|string|max:255',
+        'titulo_noticia'         => 'required|string|max:255',
+        'descripcion_noticia'    => 'required|string|max:2000',
+        'imagen_noticia'         => 'nullable|in:imagen1.jpg,imagen2.jpg,imagen3.jpg,imagen4.jpg,imagen5.jpg,imagen6.jpg',
+        'imagen_personalizada'   => 'nullable|image|max:4048', // 4MB máximo
+        'imagenes'               => 'nullable|array',
+        'imagenes.*'             => 'image|mimes:jpeg,png,jpg,gif|max:4048',
+        'eliminar_imagenes'      => 'nullable|array',
+        'eliminar_imagenes.*'    => 'string',
+    ]);
+
+    // Obtener la noticia que estamos editando
+    $noticia = Noticias::findOrFail($id);
+
+    // --- 1. Manejar eliminación de imágenes múltiples (JSON) ---
+    $imagenesActuales = json_decode($noticia->imagenes, true) ?? [];
+    $imagenesEliminar = $request->input('eliminar_imagenes', []);
+
+    // Filtrar las imágenes que NO fueron marcadas para eliminar
+    $imagenesFinales = array_filter($imagenesActuales, function ($img) use ($imagenesEliminar) {
+        return !in_array($img, $imagenesEliminar);
+    });
+
+    // Borrar físicamente las imágenes marcadas para eliminar
+    foreach ($imagenesEliminar as $imgEliminar) {
+        if (Storage::disk('public')->exists('imagenes_publicaciones/' . $imgEliminar)) {
+            Storage::disk('public')->delete('imagenes_publicaciones/' . $imgEliminar);
+        }
+    }
+
+    // --- 2. Manejar subida de nuevas imágenes múltiples ---
+    if ($request->hasFile('imagenes')) {
+        foreach ($request->file('imagenes') as $imagen) {
+            $nombreArchivo = uniqid() . '.' . $imagen->getClientOriginalExtension();
+            $imagen->storeAs('imagenes_publicaciones', $nombreArchivo, 'public');
+            $imagenesFinales[] = $nombreArchivo;
+        }
+    }
+
+    // --- 3. Manejar imagen principal ---
     $imagenFinal = $noticia->imagen_noticia;
 
-    // Si se sube una nueva imagen personalizada
     if ($request->hasFile('imagen_personalizada')) {
-        // Eliminar la imagen anterior si es personalizada
+        // Eliminar imagen anterior personalizada si existe
         if ($noticia->imagen_noticia && !str_starts_with($noticia->imagen_noticia, 'imagen')) {
             $imagePath = public_path('storage/imagenes_subidas_noticias/' . $noticia->imagen_noticia);
             if (file_exists($imagePath)) {
-                unlink($imagePath); // Eliminar el archivo
+                unlink($imagePath);
             }
         }
 
-        // Subir la nueva imagen
         $archivo = $request->file('imagen_personalizada');
         $nombreArchivo = uniqid() . '.' . $archivo->getClientOriginalExtension();
         $archivo->storeAs('imagenes_subidas_noticias', $nombreArchivo, 'public');
-        $imagenFinal = $nombreArchivo; // Guardamos el nombre del archivo
+        $imagenFinal = $nombreArchivo;
     } elseif ($request->filled('imagen_noticia')) {
-        // Si se selecciona una imagen predefinida, no es necesario eliminar nada si ya es una imagen predeterminada
-        // Pero si la imagen es personalizada previamente, la eliminamos
+        // Si cambia de imagen predefinida y la anterior era personalizada, eliminar archivo personalizado
         if ($noticia->imagen_noticia && !str_starts_with($noticia->imagen_noticia, 'imagen')) {
             $imagePath = public_path('storage/imagenes_subidas_noticias/' . $noticia->imagen_noticia);
             if (file_exists($imagePath)) {
-                unlink($imagePath); // Eliminar el archivo
+                unlink($imagePath);
             }
         }
-        $imagenFinal = $request->imagen_noticia; // Imagen predefinida seleccionada
+        $imagenFinal = $request->imagen_noticia;
     }
-     
-         // Actualizar la noticia
-         $noticia->update([
-             'titulo_noticia_portada' => $request->titulo_noticia_portada,
-             'titulo_noticia'         => $request->titulo_noticia,
-             'descripcion_noticia'    => $request->descripcion_noticia,
-             'imagen_noticia'         => $imagenFinal,
-         ]);
-     
-         return redirect()->route('dashboard')->with('success', 'Publicación actualizada exitosamente.');
-     }
+
+    // --- 4. Actualizar noticia ---
+    $noticia->update([
+        'titulo_noticia_portada' => $request->titulo_noticia_portada,
+        'titulo_noticia'         => $request->titulo_noticia,
+        'descripcion_noticia'    => $request->descripcion_noticia,
+        'imagenes'               => json_encode(array_values($imagenesFinales)), // reindexar para JSON limpio
+        'imagen_noticia'         => $imagenFinal,
+    ]);
+
+    return redirect()->route('dashboard')->with('success', 'Publicación actualizada exitosamente.');
+}
+
      
 
   

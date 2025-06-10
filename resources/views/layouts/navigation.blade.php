@@ -27,13 +27,13 @@
                        {{ __('Ver usuarios') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('frases.index')" :active="request()->routeIs('frases.index')">
-                       {{ __('Crear frase') }}
-                    </x-nav-link>
-
 
                   @endif
                   @endauth
+
+                  <x-nav-link :href="route('frases.index')" :active="request()->routeIs('frases.index')">
+                       {{ __('Crear frase') }}
+                    </x-nav-link>
 
                   <x-nav-link :href="route('destacada.index')" :active="request()->routeIs('destacada.index')">
                        {{ __('Crear Publicación destacada') }}
