@@ -94,7 +94,7 @@
 <div id="imageZoomModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
     <div class="relative">
         <img id="zoomedImage" src="" alt="Imagen ampliada" class="max-w-[90vw] max-h-[90vh] rounded shadow-lg">
-        <button onclick="closeImageModal()" class="absolute top-2 right-2 text-white text-4xl font-bold">&times;</button>
+        <button onclick="closeImageModal()" class="absolute top-2 right-2 text-gray-600  hover:text-red-600 text-4xl font-bold">&times;</button>
     </div>
 </div>
 
@@ -272,17 +272,31 @@
 
     const imagenesHtml = imagenes.length > 0
         ? `
-        <div class="flex overflow-x-auto gap-6 py-4 px-2" style="scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
-            ${imagenes.map(img => {
-                const imgSrcStorage = `/storage/imagenes_publicaciones/${img}`;
-                return `
-                    <img src="${imgSrcStorage}" alt="Imagen noticia"
-                        style="width: 600px; height: 850px; object-fit: contain; flex-shrink: 0;"
-                        class="rounded-lg shadow cursor-pointer"
-                        onclick="openImageModal('${imgSrcStorage}')"
-                    >
-                `;
-            }).join('')}
+        <div class="relative w-full max-w-4xl mx-auto">
+        <div id="carouselContainer" class="relative overflow-hidden">
+            <div id="carouselImages" class="flex transition-transform duration-500 ease-in-out" style="transform: translateX(0);">
+                ${imagenes.map(img => {
+                    const imgSrcStorage = `/storage/imagenes_publicaciones/${img}`;
+                    return `
+                        <img src="${imgSrcStorage}" alt="Imagen noticia"
+                            class="w-full max-w-none flex-shrink-0 object-contain rounded-lg shadow cursor-pointer "
+                            style="height: 600px;"
+                            onclick="openImageModal('${imgSrcStorage}')"
+                        >
+                    `;
+                }).join('')}
+            </div>
+        </div>
+
+        <!-- Botón Izquierda -->
+        <button onclick="prevSlide()" class="absolute top-1/2 left-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg">
+            &#10094;
+        </button>
+
+        <!-- Botón Derecha -->
+        <button onclick="nextSlide()" class="absolute top-1/2 right-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg">
+            &#10095;
+        </button>
         </div>
         `
         : `<p class="italic text-gray-500 mb-6">No hay imágenes para esta noticia.</p>`;
@@ -337,6 +351,40 @@ function closeImageModal() {
         }, 300);
     }
 
+//para el carousel de las imagenes de noticia
+
+    let currentSlide = 0;
+
+function updateCarousel() {
+    const carousel = document.getElementById('carouselImages');
+    const slideWidth = carousel.clientWidth;
+    const totalSlides = carousel.children.length;
+
+    if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+    if (currentSlide < 0) currentSlide = 0;
+
+    const translateX = -currentSlide * carousel.children[0].clientWidth;
+    carousel.style.transform = `translateX(${translateX}px)`;
+}
+
+function nextSlide() {
+    const carousel = document.getElementById('carouselImages');
+    if (currentSlide < carousel.children.length - 1) {
+        currentSlide++;
+        updateCarousel();
+    }
+}
+
+function prevSlide() {
+    if (currentSlide > 0) {
+        currentSlide--;
+        updateCarousel();
+    }
+}
+
+
+
+
     function openDestacadaModal(destacadoId) {
         fetch(`/destacada/${destacadoId}/show`)
             .then(response => response.json())
@@ -380,17 +428,31 @@ function closeImageModal() {
 
     const imagenesHtml = imagenesExtra.length > 0
         ? `
-        <div class="flex overflow-x-auto gap-4 py-4 px-2">
-            ${imagenesExtra.map(img => {
-                const imgSrc = `/storage/imagenes_publicaciones_destacadas/${img}`;
-                return `
-                    <img src="${imgSrc}" alt="Imagen destacada extra"
-                        style="width: 600px; height: 850px; object-fit: contain; flex-shrink: 0;"
-                        class="rounded-lg shadow cursor-pointer"
-                        onclick="openImageModal('${imgSrc}')"
-                    >
-                `;
-            }).join('')}
+         <div class="relative w-full max-w-4xl mx-auto">
+        <div id="carouselDestacadaContainer" class="relative overflow-hidden">
+            <div id="carouselDestacadaImages" class="flex transition-transform duration-500 ease-in-out" style="transform: translateX(0);">
+                ${imagenesExtra.map(img => {
+                    const imgSrc = `/storage/imagenes_publicaciones_destacadas/${img}`;
+                    return `
+                        <img src="${imgSrc}" alt="Imagen destacada extra"
+                            class="w-full max-w-none flex-shrink-0 object-contain rounded-lg shadow cursor-pointer "
+                            style="height: 600px;"
+                            onclick="openImageModal('${imgSrc}')"
+                        >
+                    `;
+                }).join('')}
+            </div>
+        </div>
+
+        <!-- Botón Izquierda -->
+        <button onclick="prevDestacadaSlide()" class="absolute top-1/2 left-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg z-10">
+            &#10094;
+        </button>
+
+        <!-- Botón Derecha -->
+        <button onclick="nextDestacadaSlide()" class="absolute top-1/2 right-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg z-10">
+            &#10095;
+        </button>
         </div>
         `
         : `<p class="italic text-gray-500 mb-6">No hay imágenes adicionales.</p>`;
@@ -442,6 +504,44 @@ function closeImageModal() {
             modal.classList.add('hidden');
         }, 300);
     }
+
+
+    //carousel de imagenes destacadas de noticia
+
+    let currentDestacadaSlide = 0;
+
+function updateDestacadaCarousel() {
+    const carousel = document.getElementById('carouselDestacadaImages');
+    if (!carousel || !carousel.children.length) return;
+
+    const slideWidth = carousel.children[0].clientWidth;
+    const totalSlides = carousel.children.length;
+
+    if (currentDestacadaSlide >= totalSlides) currentDestacadaSlide = totalSlides - 1;
+    if (currentDestacadaSlide < 0) currentDestacadaSlide = 0;
+
+    const translateX = -currentDestacadaSlide * slideWidth;
+    carousel.style.transform = `translateX(${translateX}px)`;
+}
+
+function nextDestacadaSlide() {
+    const carousel = document.getElementById('carouselDestacadaImages');
+    if (currentDestacadaSlide < carousel.children.length - 1) {
+        currentDestacadaSlide++;
+        updateDestacadaCarousel();
+    }
+}
+
+function prevDestacadaSlide() {
+    if (currentDestacadaSlide > 0) {
+        currentDestacadaSlide--;
+        updateDestacadaCarousel();
+    }
+}
+
+
+
+
 </script>
 
 
