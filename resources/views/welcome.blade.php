@@ -9,8 +9,8 @@
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="{{asset('assets/img/favicon.png') }}" rel="icon">
-  <link href="{{asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <link href="{{asset('assets/img/favicon2.png') }}" rel="icon">
+  <link href="{{asset('assets/img/favicon2.png') }}" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -27,6 +27,26 @@
   <!-- Main CSS File -->
   <link href="{{asset('assets/css/main.css') }}" rel="stylesheet">
 
+
+  <style>
+ #zoomedImage {
+  transition: transform 0.4s ease, transform-origin 0.3s ease;
+  cursor: zoom-in;
+  user-select: none;
+  will-change: transform;
+}
+#zoomedImage.zoomed {
+  cursor: grab;
+}
+
+#zoomedImage {
+  max-width: 100%;
+  height: auto;
+}
+
+
+
+</style>
 
 
       {{-- <!-- Scripts -->
@@ -59,7 +79,7 @@
         class="relative bg-white rounded-lg shadow-xl w-full max-w-[80%] mx-4 p-6 transform scale-95 opacity-0 transition-all duration-300 max-h-[90vh] overflow-y-auto">
         
         <!-- Botón de cerrar -->
-        <button onclick="closeNoticiaModal()" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-2xl font-bold">
+        <button onclick="closeNoticiaModal()" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-4xl font-bold">
             &times;
         </button>
 
@@ -78,7 +98,7 @@
         class="relative bg-white rounded-lg shadow-xl w-full max-w-[80%] mx-4 p-6 transform scale-95 opacity-0 transition-all duration-300 max-h-[90vh] overflow-y-auto">
         
         <!-- Botón de cerrar -->
-        <button onclick="closeDestacadaModal()" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-2xl font-bold">
+        <button onclick="closeDestacadaModal()" class="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-4xl font-bold">
             &times;
         </button>
 
@@ -91,12 +111,12 @@
 
 
    <!-- Modal para imagen ampliada -->
-<div id="imageZoomModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
-    <div class="relative">
-        <img id="zoomedImage" src="" alt="Imagen ampliada" class="max-w-[90vw] max-h-[90vh] rounded shadow-lg">
-        <button onclick="closeImageModal()" class="absolute top-2 right-2 text-gray-600  hover:text-red-600 text-4xl font-bold">&times;</button>
-    </div>
+<div id="imageZoomModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 overflow-auto transition-opacity duration-300 transform scale-95 opacity-0 hidden">
+  <div class="flex items-center justify-center min-h-screen p-8">
+    <img id="zoomedImage" src="" alt="Imagen ampliada" class="rounded shadow-lg max-w-[90vw] max-h-[90vh]">
+  </div>
 </div>
+
 
 
 
@@ -279,7 +299,7 @@
                     const imgSrcStorage = `/storage/imagenes_publicaciones/${img}`;
                     return `
                         <img src="${imgSrcStorage}" alt="Imagen noticia"
-                            class="w-full max-w-none flex-shrink-0 object-contain rounded-lg shadow cursor-pointer "
+                            class="w-full max-w-none flex-shrink-0 object-contain rounded-lg  cursor-pointer "
                             style="height: 600px;"
                             onclick="openImageModal('${imgSrcStorage}')"
                         >
@@ -289,12 +309,12 @@
         </div>
 
         <!-- Botón Izquierda -->
-        <button onclick="prevSlide()" class="absolute top-1/2 left-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg">
+        <button id="prevBtn" onclick="prevSlide()" class="absolute top-1/2 -left-20 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg">
             &#10094;
         </button>
 
         <!-- Botón Derecha -->
-        <button onclick="nextSlide()" class="absolute top-1/2 right-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg">
+        <button id="nextBtn" onclick="nextSlide()" class="absolute top-1/2 -right-20 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg">
             &#10095;
         </button>
         </div>
@@ -315,6 +335,10 @@
         </div>
     `;
 
+    currentSlide = 0;
+    setTimeout(updateCarousel, 50); // Delay para esperar a que el DOM se actualice
+
+
     modal.classList.remove('hidden');
     setTimeout(() => {
         modalBox.classList.remove('scale-95', 'opacity-0');
@@ -322,21 +346,8 @@
     }, 10);
 }
 
-function openImageModal(src) {
-    const zoomModal = document.getElementById('imageZoomModal');
-    const zoomedImage = document.getElementById('zoomedImage');
-    
-    zoomedImage.src = src;
-    zoomModal.classList.remove('hidden');
-}
 
-function closeImageModal() {
-    const zoomModal = document.getElementById('imageZoomModal');
-    const zoomedImage = document.getElementById('zoomedImage');
-    
-    zoomedImage.src = '';
-    zoomModal.classList.add('hidden');
-}
+
 
 
 
@@ -357,15 +368,42 @@ function closeImageModal() {
 
 function updateCarousel() {
     const carousel = document.getElementById('carouselImages');
-    const slideWidth = carousel.clientWidth;
     const totalSlides = carousel.children.length;
+    const slideWidth = carousel.children[0].clientWidth;
 
+    // Limitar el rango
     if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
     if (currentSlide < 0) currentSlide = 0;
 
-    const translateX = -currentSlide * carousel.children[0].clientWidth;
+    // Mover el carrusel
+    const translateX = -currentSlide * slideWidth;
     carousel.style.transform = `translateX(${translateX}px)`;
+
+    // Controlar estado de los botones
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    if (currentSlide === 0) {
+        prevBtn.classList.add('bg-gray-300', 'text-gray-500');
+        prevBtn.classList.remove('bg-[#dd6b10]', 'text-white');
+        prevBtn.disabled = true;
+    } else {
+        prevBtn.classList.remove('bg-gray-300', 'text-gray-500');
+        prevBtn.classList.add('bg-[#dd6b10]', 'text-white');
+        prevBtn.disabled = false;
+    }
+
+    if (currentSlide === totalSlides - 1) {
+        nextBtn.classList.add('bg-gray-300', 'text-gray-500');
+        nextBtn.classList.remove('bg-[#dd6b10]', 'text-white');
+        nextBtn.disabled = true;
+    } else {
+        nextBtn.classList.remove('bg-gray-300', 'text-gray-500');
+        nextBtn.classList.add('bg-[#dd6b10]', 'text-white');
+        nextBtn.disabled = false;
+    }
 }
+
 
 function nextSlide() {
     const carousel = document.getElementById('carouselImages');
@@ -412,6 +450,10 @@ function prevSlide() {
             .catch(error => {
                 console.error('Error cargando la destacada:', error);
             });
+
+            currentSlide = 0;
+            updateCarousel();
+
     }
 
     function renderDestacadaModalContent(data, rutaImagenPrincipal) {
@@ -435,7 +477,7 @@ function prevSlide() {
                     const imgSrc = `/storage/imagenes_publicaciones_destacadas/${img}`;
                     return `
                         <img src="${imgSrc}" alt="Imagen destacada extra"
-                            class="w-full max-w-none flex-shrink-0 object-contain rounded-lg shadow cursor-pointer "
+                            class="w-full max-w-none flex-shrink-0 object-contain rounded-lg  cursor-pointer "
                             style="height: 600px;"
                             onclick="openImageModal('${imgSrc}')"
                         >
@@ -445,12 +487,12 @@ function prevSlide() {
         </div>
 
         <!-- Botón Izquierda -->
-        <button onclick="prevDestacadaSlide()" class="absolute top-1/2 left-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg z-10">
+        <button onclick="prevDestacadaSlide()" class="absolute top-1/2 -left-20 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg z-10">
             &#10094;
         </button>
 
         <!-- Botón Derecha -->
-        <button onclick="nextDestacadaSlide()" class="absolute top-1/2 right-0 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg z-10">
+        <button onclick="nextDestacadaSlide()" class="absolute top-1/2 -right-20 -translate-y-1/2 bg-[#dd6b10] bg-opacity-100  text-white hover:scale-125  transition-transform duration-200 px-3 py-2 rounded-full shadow-lg z-10">
             &#10095;
         </button>
         </div>
@@ -478,21 +520,8 @@ function prevSlide() {
     }, 10);
 }
 
-    function openImageModal(src) {
-    const zoomModal = document.getElementById('imageZoomModal');
-    const zoomedImage = document.getElementById('zoomedImage');
-    
-    zoomedImage.src = src;
-    zoomModal.classList.remove('hidden');
-}
+ 
 
-function closeImageModal() {
-    const zoomModal = document.getElementById('imageZoomModal');
-    const zoomedImage = document.getElementById('zoomedImage');
-    
-    zoomedImage.src = '';
-    zoomModal.classList.add('hidden');
-}
 
     function closeDestacadaModal() {
         const modal = document.getElementById('modalDestacada');
@@ -539,6 +568,125 @@ function prevDestacadaSlide() {
     }
 }
 
+
+const zoomModal = document.getElementById('imageZoomModal');
+const zoomedImage = document.getElementById('zoomedImage');
+
+let isZoomed = false;
+let scale = 2.8; // escala de zoom
+let translateX = 0;
+let translateY = 0;
+let originX = 0;
+let originY = 0;
+
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+
+function openImageModal(src) {
+    zoomedImage.src = src;
+    resetZoom();
+    zoomModal.classList.remove('hidden');
+
+    setTimeout(() => {
+    zoomModal.classList.remove('scale-95', 'opacity-0');
+    zoomModal.classList.add('scale-100', 'opacity-100');
+}, 10);
+
+
+    zoomModal.addEventListener('click', zoomModalClickHandler);
+   
+
+   
+}
+
+function closeImageModal() {
+    zoomModal.classList.remove('scale-100', 'opacity-100');
+    zoomModal.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+        zoomModal.classList.add('hidden');
+        zoomedImage.src = '';
+        resetZoom();
+    }, 300); // espera que termine la transición
+}
+
+
+function resetZoom() {
+    isZoomed = false;
+    translateX = 0;
+    translateY = 0;
+    originX = 0;
+    originY = 0;
+    updateTransform();
+}
+
+function zoomModalClickHandler(e) {
+    if (e.target !== zoomedImage) {
+        closeImageModal();
+        return;
+    }
+    // Si está zoomed, hacer reset (deszoom)
+    if (isZoomed) {
+        resetZoom();
+        return;
+    }
+
+    // Obtener posición del click relativo a la imagen
+    const rect = zoomedImage.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    // Calcular origen de zoom en porcentaje
+    originX = (clickX / rect.width) * 100;
+    originY = (clickY / rect.height) * 100;
+
+    // Ajustar transform-origin CSS para hacer zoom hacia ese punto
+    zoomedImage.style.transformOrigin = `${originX}% ${originY}%`;
+
+    // Aplicar zoom y guardar estado
+    isZoomed = true;
+    translateX = 0;
+    translateY = 0;
+    updateTransform();
+}
+
+function updateTransform() {
+   zoomedImage.style.transform = isZoomed
+    ? `scale(${scale})`
+    : `scale(1)`;
+
+zoomedImage.style.transformOrigin = isZoomed
+    ? `${originX}% ${originY}%`
+    : `50% 50%`;
+
+    if (isZoomed) {
+        zoomedImage.style.cursor = isDragging ? 'grabbing' : 'zoom-out';
+    } else {
+        zoomedImage.style.cursor = 'zoom-in';
+    }
+}
+
+
+// Cerrar modal normal si se hace clic fuera del contenido
+document.addEventListener('click', function (e) {
+    const modal = document.getElementById('modal');
+    const modalBox = document.getElementById('modalBox');
+
+    if (!modal.classList.contains('hidden') && modal.contains(e.target) && !modalBox.contains(e.target)) {
+        closeNoticiaModal();
+    }
+});
+
+// Cerrar modal destacada si se hace clic fuera del contenido
+document.addEventListener('click', function (e) {
+    const modalDestacada = document.getElementById('modalDestacada');
+    const modalBoxDestacada = document.getElementById('modalBoxDestacada');
+
+    if (!modalDestacada.classList.contains('hidden') && modalDestacada.contains(e.target) && !modalBoxDestacada.contains(e.target)) {
+        closeDestacadaModal();
+    }
+});
 
 
 
